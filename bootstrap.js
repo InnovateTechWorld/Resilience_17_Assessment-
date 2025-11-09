@@ -56,5 +56,6 @@ async function loadSecretsToEnv({
     process.env.__ALREADY_BOOTSTRAPPED_ENVS = true;
   }
   // eslint-disable-next-line global-require
-  require('./app');
+  const server = require('./app');  // ← Require the server
+  server.startServer();             // ← Start it explicitly
 })();
