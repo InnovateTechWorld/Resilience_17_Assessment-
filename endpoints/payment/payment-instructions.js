@@ -10,20 +10,18 @@ module.exports = createHandler({
     appLogger.info({ requestContext: rc, response: rs }, 'payment-instructions-request-completed');
   },
   async handler(rc, helpers) {
-    const payload = rc.body;
+  const payload = rc.body;
 
-    const response = await paymentInstructionsService(payload);
-    
-    let httpStatus;
-    if (response.status === 'failed') {
-      httpStatus = helpers.http_statuses.HTTP_400_BAD_REQUEST;
-    } else {
-      httpStatus = helpers.http_statuses.HTTP_200_OK;
-    }
+  const response = await paymentInstructionsService(payload);
+  
+  let httpStatus;
+  if (response.status === 'failed') {
+    httpStatus = helpers.http_statuses.HTTP_400_BAD_REQUEST;
+  } else {
+    httpStatus = helpers.http_statuses.HTTP_200_OK;
+  }
 
-    return {
-      status: httpStatus,
-      data: response,
-    };
-  },
+  // Return the response data directly (not wrapped)
+  return response;
+ },
 });
