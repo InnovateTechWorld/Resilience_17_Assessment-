@@ -222,11 +222,18 @@ function Server(serverConfig = {}) {
         }
 
         responseComponents.statusCode = result.status || 200;
-        responseComponents.body.status = 'success';
-        responseComponents.body.message = result.message;
-        responseComponents.body.data = result.data || {};
 
-        expressResponse.status(responseComponents.statusCode).json(responseComponents.body);
+        // Check if this endpoint should unwrap the response
+        if (handlerConfiguration.props?.unwrapResponse) {
+          // Send the data directly without framework wrapping
+          expressResponse.status(responseComponents.statusCode).json(result.data || {});
+        } else {
+          // Standard framework response wrapping
+          responseComponents.body.status = 'success';
+          responseComponents.body.message = result.message;
+          responseComponents.body.data = result.data || {};
+          expressResponse.status(responseComponents.statusCode).json(responseComponents.body);
+        }
       } catch (error) {
         const statusCode = !error.isApplicationError
           ? 500

@@ -15,9 +15,9 @@ describe('Integration Tests', () => {
       })
       .end((err, res) => {
         expect(res.status).to.equal(200);
-        expect(res.body.data.status).to.equal('successful');
-        expect(res.body.data.accounts[0].balance).to.equal(200);
-        expect(res.body.data.accounts[1].balance).to.equal(330);
+        expect(res.body.status).to.equal('successful');
+        expect(res.body.accounts[0].balance).to.equal(200);
+        expect(res.body.accounts[1].balance).to.equal(330);
         done();
       });
   });
@@ -34,8 +34,8 @@ describe('Integration Tests', () => {
       })
       .end((err, res) => {
         expect(res.status).to.equal(400);
-        expect(res.body.data.status).to.equal('failed');
-        expect(res.body.data.status_code).to.equal('SY01');
+        expect(res.body.status).to.equal('failed');
+        expect(res.body.status_code).to.equal('SY01');
         done();
       });
   });
@@ -52,8 +52,8 @@ describe('Integration Tests', () => {
       })
       .end((err, res) => {
         expect(res.status).to.equal(400);
-        expect(res.body.data.status).to.equal('failed');
-        expect(res.body.data.status_code).to.equal('AC01');
+        expect(res.body.status).to.equal('failed');
+        expect(res.body.status_code).to.equal('AC01');
         done();
       });
   });

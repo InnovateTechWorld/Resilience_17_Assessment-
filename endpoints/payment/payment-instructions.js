@@ -6,6 +6,9 @@ module.exports = createHandler({
   path: '/payment-instructions',
   method: 'post',
   middlewares: [],
+  props: {
+    unwrapResponse: true, // Don't wrap response in framework format
+  },
   async onResponseEnd(rc, rs) {
     appLogger.info({ requestContext: rc, response: rs }, 'payment-instructions-request-completed');
   },
@@ -13,7 +16,7 @@ module.exports = createHandler({
   const payload = rc.body;
 
   const response = await paymentInstructionsService(payload);
-  
+
   let httpStatus;
   if (response.status === 'failed') {
     httpStatus = helpers.http_statuses.HTTP_400_BAD_REQUEST;
@@ -21,7 +24,10 @@ module.exports = createHandler({
     httpStatus = helpers.http_statuses.HTTP_200_OK;
   }
 
-  // Return the response data directly (not wrapped)
-  return response;
- },
+  // Return the response data directly (unwrapped)
+  return {
+    status: httpStatus,
+    data: response,
+  };
+  },
 });
