@@ -7,9 +7,9 @@ describe('Executor', () => {
       type: 'DEBIT',
       amount: 30,
       currency: 'USD',
-      debit_account: 'a',
-      credit_account: 'b',
-      execute_by: null,
+      debitAccount: 'a',
+      creditAccount: 'b',
+      executeBy: null,
     };
     const accounts = [
       { id: 'a', balance: 230, currency: 'USD' },
@@ -27,9 +27,9 @@ describe('Executor', () => {
       type: 'DEBIT',
       amount: 30,
       currency: 'USD',
-      debit_account: 'a',
-      credit_account: 'b',
-      execute_by: '2020-01-01',
+      debitAccount: 'a',
+      creditAccount: 'b',
+      executeBy: '2020-01-01',
     };
     const accounts = [
       { id: 'a', balance: 230, currency: 'USD' },
@@ -47,9 +47,9 @@ describe('Executor', () => {
       type: 'DEBIT',
       amount: 30,
       currency: 'USD',
-      debit_account: 'a',
-      credit_account: 'b',
-      execute_by: '2099-01-01',
+      debitAccount: 'a',
+      creditAccount: 'b',
+      executeBy: '2099-01-01',
     };
     const accounts = [
       { id: 'a', balance: 230, currency: 'USD' },

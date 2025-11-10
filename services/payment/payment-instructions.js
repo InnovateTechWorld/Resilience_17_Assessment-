@@ -29,27 +29,27 @@ async function paymentInstructions(serviceData) {
       type: null,
       amount: null,
       currency: null,
-      debit_account: null,
-      credit_account: null,
-      execute_by: null,
+      debitAccount: null,
+      creditAccount: null,
+      executeBy: null,
       status: 'failed',
       status_reason: 'Malformed instruction: unable to parse keywords',
       status_code: parsed.error,
-      accounts: []
+      accounts: [],
     };
   }
 
   // Validate instruction
   const validationResult = validate(parsed, accounts);
   if (validationResult.status === 'failed') {
-    const { debit_account, credit_account } = parsed;
+    const { debitAccount, creditAccount } = parsed;
     const involvedAccounts = accounts
-      .filter(a => a.id === debit_account || a.id === credit_account)
-      .map(a => ({
+      .filter((a) => a.id === debitAccount || a.id === creditAccount)
+      .map((a) => ({
         id: a.id,
         balance: a.balance,
         balance_before: a.balance,
-        currency: a.currency
+        currency: a.currency,
       }));
 
     return {
@@ -65,7 +65,10 @@ async function paymentInstructions(serviceData) {
   return {
     ...parsed,
     ...executionResult,
-    status_reason: executionResult.status === 'successful' ? 'Transaction executed successfully' : 'Transaction scheduled for future execution',
+    status_reason:
+      executionResult.status === 'successful'
+        ? 'Transaction executed successfully'
+        : 'Transaction scheduled for future execution',
   };
 }
 

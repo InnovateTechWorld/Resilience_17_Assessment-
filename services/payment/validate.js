@@ -11,7 +11,7 @@ const STATUS_CODES = {
   MISSING_KEYWORD: 'SY01',
   INVALID_ORDER: 'SY02',
   MALFORMED: 'SY03',
-  INVALID_DATE: 'DT01'
+  INVALID_DATE: 'DT01',
 };
 
 const SUPPORTED_CURRENCIES = ['NGN', 'USD', 'GBP', 'GHS'];
@@ -33,8 +33,10 @@ function isValidDate(dateStr) {
   if (year.length !== 4 || month.length !== 2 || day.length !== 2) {
     return false;
   }
-  for (const part of parts) {
-    for (const char of part) {
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    for (let j = 0; j < part.length; j++) {
+      const char = part[j];
       if (char < '0' || char > '9') {
         return false;
       }
@@ -48,13 +50,12 @@ function isValidDate(dateStr) {
   return true;
 }
 
-
 function validate(parsed, accounts) {
-  const { type, amount, currency, debit_account, credit_account, execute_by } = parsed;
+  const { amount, currency, debitAccount, creditAccount, executeBy } = parsed; // Removed unused 'type'
 
   // Find accounts
-  const debitAccObj = accounts.find(a => a.id === debit_account);
-  const creditAccObj = accounts.find(a => a.id === credit_account);
+  const debitAccObj = accounts.find((a) => a.id === debitAccount);
+  const creditAccObj = accounts.find((a) => a.id === creditAccount);
   if (!debitAccObj || !creditAccObj) {
     return {
       status: 'failed',
@@ -64,7 +65,7 @@ function validate(parsed, accounts) {
   }
 
   // Check same account
-  if (debit_account === credit_account) {
+  if (debitAccount === creditAccount) {
     return {
       status: 'failed',
       status_reason: 'Debit and credit accounts cannot be the same',
@@ -74,11 +75,11 @@ function validate(parsed, accounts) {
 
   // Check currency support
   if (!SUPPORTED_CURRENCIES.includes(currency)) {
-      return {
-          status: 'failed',
-          status_reason: 'Unsupported currency. Only NGN, USD, GBP, and GHS are supported',
-          status_code: STATUS_CODES.CURRENCY_UNSUPPORTED,
-      };
+    return {
+      status: 'failed',
+      status_reason: 'Unsupported currency. Only NGN, USD, GBP, and GHS are supported',
+      status_code: STATUS_CODES.CURRENCY_UNSUPPORTED,
+    };
   }
 
   // Check currency match
@@ -100,13 +101,13 @@ function validate(parsed, accounts) {
   }
 
   // Date validation
-  if (execute_by) {
-    if (!isValidDate(execute_by)) {
-        return {
-            status: 'failed',
-            status_reason: 'Invalid date format',
-            status_code: STATUS_CODES.INVALID_DATE,
-        };
+  if (executeBy) {
+    if (!isValidDate(executeBy)) {
+      return {
+        status: 'failed',
+        status_reason: 'Invalid date format',
+        status_code: STATUS_CODES.INVALID_DATE,
+      };
     }
   }
 

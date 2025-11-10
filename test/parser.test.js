@@ -9,9 +9,9 @@ describe('Parser', () => {
       type: 'DEBIT',
       amount: 30,
       currency: 'USD',
-      debit_account: 'a',
-      credit_account: 'b',
-      execute_by: null,
+      debitAccount: 'A',
+      creditAccount: 'B',
+      executeBy: null,
     });
   });
 
@@ -22,35 +22,37 @@ describe('Parser', () => {
       type: 'CREDIT',
       amount: 100,
       currency: 'NGN',
-      debit_account: 'a',
-      credit_account: 'b',
-      execute_by: null,
+      debitAccount: 'A',
+      creditAccount: 'B',
+      executeBy: null,
     });
   });
 
   it('should parse an instruction with a future date', () => {
-    const instruction = 'DEBIT 500 USD FROM ACCOUNT N90394 FOR CREDIT TO ACCOUNT N9122 ON 2026-09-20';
+    const instruction =
+      'DEBIT 500 USD FROM ACCOUNT N90394 FOR CREDIT TO ACCOUNT N9122 ON 2026-09-20';
     const result = parseInstruction(instruction);
     expect(result).to.deep.equal({
       type: 'DEBIT',
       amount: 500,
       currency: 'USD',
-      debit_account: 'N90394',
-      credit_account: 'N9122',
-      execute_by: '2026-09-20',
+      debitAccount: 'N90394',
+      creditAccount: 'N9122',
+      executeBy: '2026-09-20',
     });
   });
 
   it('should handle extra whitespace', () => {
-    const instruction = '  DEBIT   30   USD   FROM   ACCOUNT   a   FOR   CREDIT   TO   ACCOUNT   b  ';
+    const instruction =
+      '  DEBIT   30   USD   FROM   ACCOUNT   a   FOR   CREDIT   TO   ACCOUNT   b  ';
     const result = parseInstruction(instruction);
     expect(result).to.deep.equal({
       type: 'DEBIT',
       amount: 30,
       currency: 'USD',
-      debit_account: 'a',
-      credit_account: 'b',
-      execute_by: null,
+      debitAccount: 'A',
+      creditAccount: 'B',
+      executeBy: null,
     });
   });
 
@@ -61,9 +63,9 @@ describe('Parser', () => {
       type: 'DEBIT',
       amount: 30,
       currency: 'USD',
-      debit_account: 'a',
-      credit_account: 'b',
-      execute_by: null,
+      debitAccount: 'A',
+      creditAccount: 'B',
+      executeBy: null,
     });
   });
 

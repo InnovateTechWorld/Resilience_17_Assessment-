@@ -1,70 +1,112 @@
 function normalizeAndTokenize(instr) {
   if (!instr || typeof instr !== 'string') return [];
-  // Trim & split by spaces, remove empty tokens:
-  const raw = instr.trim();
-  const tokens = raw.split(' ');
-  const toks = [];
-  for (let t of tokens) {
-    if (t !== '') toks.push(t);
-  }
+  const trimmed = instr.trim();
+  if (trimmed === '') return [];
+  const toks = trimmed.split(' ').filter((t) => t !== '');
   return toks;
 }
 
 function parseInstruction(instr) {
   const toks = normalizeAndTokenize(instr);
+  if (toks[0].toUpperCase() !== 'DEBIT' && toks[0].toUpperCase() !== 'CREDIT')
+    return { error: 'SY01' };
   if (toks.length < 6) return { error: 'SY03' };
 
-  // get first token (type)
-  const first = toks[0].toUpperCase();
-  if (first !== 'DEBIT' && first !== 'CREDIT') return { error: 'SY01' };
+  // Destructure amount and currency before uppercasing
+  const [, amountToken, currencyToken] = toks;
 
-  // amount is next token (1)
-  const amountToken = toks[1];
-  // Validate integer: must contain only digits
-  for (let ch of amountToken) {
-    if (ch < '0' || ch > '9') return { error: 'AM01' };
+  // Normalize keywords to uppercase for comparison
+  for (let i = 0; i < toks.length; i++) {
+    toks[i] = toks[i].toUpperCase();
   }
-  const amount = parseInt(amountToken, 10);
 
-  // currency is token[2]
-  const currency = toks[2].toUpperCase();
+  let type = null;
+  let amount = null;
+  let currency = null;
+  let debitAccount = null;
+  let creditAccount = null;
+  let executeBy = null;
 
-  let debitAccount, creditAccount, executeBy = null;
-
-  if (first === 'DEBIT') {
-    // DEBIT amount currency FROM ACCOUNT <acctA> FOR CREDIT TO ACCOUNT <acctB> [ON date]
-    if (toks[3].toUpperCase() !== 'FROM' || toks[4].toUpperCase() !== 'ACCOUNT' || toks[6].toUpperCase() !== 'FOR' || toks[7].toUpperCase() !== 'CREDIT' || toks[8].toUpperCase() !== 'TO' || toks[9].toUpperCase() !== 'ACCOUNT') {
+  if (toks[0] === 'DEBIT') {
+    // DEBIT format: DEBIT amount currency FROM ACCOUNT debitAccount FOR CREDIT TO ACCOUNT creditAccount [ON date]
+    if (toks.length > 13) return { error: 'SY02' };
+    if (
+      toks[1] &&
+      toks[2] &&
+      toks[3] === 'FROM' &&
+      toks[4] === 'ACCOUNT' &&
+      toks[6] === 'FOR' &&
+      toks[7] === 'CREDIT' &&
+      toks[8] === 'TO' &&
+      toks[9] === 'ACCOUNT'
+    ) {
+      // Validate amount
+      let isValidAmount = true;
+      for (let i = 0; i < amountToken.length; i++) {
+        if (amountToken[i] < '0' || amountToken[i] > '9') {
+          isValidAmount = false;
+          break;
+        }
+      }
+      if (!isValidAmount) return { error: 'AM01' };
+      amount = parseInt(amountToken, 10);
+      currency = currencyToken.toUpperCase();
+      if (toks.length === 11) {
+        [, , , , , debitAccount, , , , , creditAccount] = toks;
+      } else if (toks.length === 13 && toks[11] === 'ON') {
+        [, , , , , debitAccount, , , , , creditAccount, , executeBy] = toks;
+      } else {
+        return { error: 'SY02' };
+      }
+      type = 'DEBIT';
+    } else {
       return { error: 'SY02' };
     }
-    debitAccount = toks[5];
-    creditAccount = toks[10];
-    if (toks.length > 11) {
-      if (toks[11].toUpperCase() !== 'ON') return { error: 'SY02' };
-      executeBy = toks[12];
-    }
-  } else { // CREDIT
-    // CREDIT amount currency TO ACCOUNT <acctB> FOR DEBIT FROM ACCOUNT <acctA> [ON date]
-    if (toks[3].toUpperCase() !== 'TO' || toks[4].toUpperCase() !== 'ACCOUNT' || toks[6].toUpperCase() !== 'FOR' || toks[7].toUpperCase() !== 'DEBIT' || toks[8].toUpperCase() !== 'FROM' || toks[9].toUpperCase() !== 'ACCOUNT') {
+  } else if (toks[0] === 'CREDIT') {
+    // CREDIT format: CREDIT amount currency TO ACCOUNT creditAccount FOR DEBIT FROM ACCOUNT debitAccount [ON date]
+    if (toks.length > 13) return { error: 'SY02' };
+    if (
+      toks[1] &&
+      toks[2] &&
+      toks[3] === 'TO' &&
+      toks[4] === 'ACCOUNT' &&
+      toks[6] === 'FOR' &&
+      toks[7] === 'DEBIT' &&
+      toks[8] === 'FROM' &&
+      toks[9] === 'ACCOUNT'
+    ) {
+      // Validate amount
+      let isValidAmount = true;
+      for (let i = 0; i < amountToken.length; i++) {
+        if (amountToken[i] < '0' || amountToken[i] > '9') {
+          isValidAmount = false;
+          break;
+        }
+      }
+      if (!isValidAmount) return { error: 'AM01' };
+      amount = parseInt(amountToken, 10);
+      currency = currencyToken;
+      if (toks.length === 11) {
+        [, , , , , creditAccount, , , , , debitAccount] = toks;
+      } else if (toks.length === 13 && toks[11] === 'ON') {
+        [, , , , , creditAccount, , , , , debitAccount, , executeBy] = toks;
+      } else {
+        return { error: 'SY02' };
+      }
+      type = 'CREDIT';
+    } else {
       return { error: 'SY02' };
-    }
-    creditAccount = toks[5];
-    debitAccount = toks[10];
-    if (toks.length > 11) {
-      if (toks[11].toUpperCase() !== 'ON') return { error: 'SY02' };
-      executeBy = toks[12];
     }
   }
 
   return {
-    type: first,
+    type,
     amount,
     currency,
-    debit_account: debitAccount,
-    credit_account: creditAccount,
-    execute_by: executeBy,
+    debitAccount,
+    creditAccount,
+    executeBy,
   };
 }
 
-module.exports = {
-  parseInstruction,
-};
+module.exports = { parseInstruction };

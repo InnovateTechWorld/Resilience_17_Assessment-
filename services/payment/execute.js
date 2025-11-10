@@ -4,18 +4,19 @@ const STATUS_CODES = {
 };
 
 function execute(parsed, accounts) {
-  const { debit_account, credit_account, amount, execute_by } = parsed;
-  const debitAccObj = { ...accounts.find(a => a.id === debit_account) };
-  const creditAccObj = { ...accounts.find(a => a.id === credit_account) };
+  const { debitAccount, creditAccount, amount, executeBy } = parsed;
+  const debitAccObj = { ...accounts.find((a) => a.id === debitAccount) };
+  const creditAccObj = { ...accounts.find((a) => a.id === creditAccount) };
 
-  const balance_before_debit = debitAccObj.balance;
-  const balance_before_credit = creditAccObj.balance;
+  const balanceBeforeDebit = debitAccObj.balance;
+  const balanceBeforeCredit = creditAccObj.balance;
 
-  let status, statusCode;
+  let status;
+  let statusCode;
   const now = new Date();
   const currentDate = now.toISOString().split('T')[0];
 
-  if (!execute_by || execute_by <= currentDate) {
+  if (!executeBy || executeBy <= currentDate) {
     // Execute
     debitAccObj.balance -= amount;
     creditAccObj.balance += amount;
@@ -30,13 +31,13 @@ function execute(parsed, accounts) {
     {
       id: debitAccObj.id,
       balance: debitAccObj.balance,
-      balance_before: balance_before_debit,
+      balance_before: balanceBeforeDebit,
       currency: debitAccObj.currency,
     },
     {
       id: creditAccObj.id,
       balance: creditAccObj.balance,
-      balance_before: balance_before_credit,
+      balance_before: balanceBeforeCredit,
       currency: creditAccObj.currency,
     },
   ];

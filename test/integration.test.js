@@ -8,10 +8,10 @@ describe('Integration Tests', () => {
       .post('/payment-instructions')
       .send({
         accounts: [
-          { id: 'a', balance: 230, currency: 'USD' },
-          { id: 'b', balance: 300, currency: 'USD' },
+          { id: 'A', balance: 230, currency: 'USD' },
+          { id: 'B', balance: 300, currency: 'USD' },
         ],
-        instruction: 'DEBIT 30 USD FROM ACCOUNT a FOR CREDIT TO ACCOUNT b',
+        instruction: 'DEBIT 30 USD FROM ACCOUNT A FOR CREDIT TO ACCOUNT B',
       })
       .end((err, res) => {
         expect(res.status).to.equal(200);
@@ -27,10 +27,10 @@ describe('Integration Tests', () => {
       .post('/payment-instructions')
       .send({
         accounts: [
-          { id: 'a', balance: 230, currency: 'USD' },
-          { id: 'b', balance: 300, currency: 'USD' },
+          { id: 'A', balance: 230, currency: 'USD' },
+          { id: 'B', balance: 300, currency: 'USD' },
         ],
-        instruction: 'SEND 30 USD TO ACCOUNT b',
+        instruction: 'SEND 30 USD TO ACCOUNT B',
       })
       .end((err, res) => {
         expect(res.status).to.equal(400);
@@ -45,10 +45,10 @@ describe('Integration Tests', () => {
       .post('/payment-instructions')
       .send({
         accounts: [
-          { id: 'a', balance: 20, currency: 'USD' },
-          { id: 'b', balance: 300, currency: 'USD' },
+          { id: 'A', balance: 20, currency: 'USD' },
+          { id: 'B', balance: 300, currency: 'USD' },
         ],
-        instruction: 'DEBIT 30 USD FROM ACCOUNT a FOR CREDIT TO ACCOUNT b',
+        instruction: 'DEBIT 30 USD FROM ACCOUNT A FOR CREDIT TO ACCOUNT B',
       })
       .end((err, res) => {
         expect(res.status).to.equal(400);

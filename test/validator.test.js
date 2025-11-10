@@ -7,9 +7,9 @@ describe('Validator', () => {
       type: 'DEBIT',
       amount: 30,
       currency: 'USD',
-      debit_account: 'a',
-      credit_account: 'b',
-      execute_by: null,
+      debitAccount: 'a',
+      creditAccount: 'b',
+      executeBy: null,
     };
     const accounts = [
       { id: 'a', balance: 230, currency: 'USD' },
@@ -26,9 +26,9 @@ describe('Validator', () => {
       type: 'DEBIT',
       amount: 500,
       currency: 'USD',
-      debit_account: 'a',
-      credit_account: 'b',
-      execute_by: null,
+      debitAccount: 'a',
+      creditAccount: 'b',
+      executeBy: null,
     };
     const accounts = [
       { id: 'a', balance: 230, currency: 'USD' },
@@ -43,9 +43,9 @@ describe('Validator', () => {
       type: 'DEBIT',
       amount: 30,
       currency: 'USD',
-      debit_account: 'a',
-      credit_account: 'b',
-      execute_by: null,
+      debitAccount: 'a',
+      creditAccount: 'b',
+      executeBy: null,
     };
     const accounts = [
       { id: 'a', balance: 230, currency: 'USD' },
@@ -60,9 +60,9 @@ describe('Validator', () => {
       type: 'DEBIT',
       amount: 30,
       currency: 'EUR',
-      debit_account: 'a',
-      credit_account: 'b',
-      execute_by: null,
+      debitAccount: 'a',
+      creditAccount: 'b',
+      executeBy: null,
     };
     const accounts = [
       { id: 'a', balance: 230, currency: 'EUR' },
@@ -77,13 +77,11 @@ describe('Validator', () => {
       type: 'DEBIT',
       amount: 30,
       currency: 'USD',
-      debit_account: 'a',
-      credit_account: 'a',
-      execute_by: null,
+      debitAccount: 'a',
+      creditAccount: 'a',
+      executeBy: null,
     };
-    const accounts = [
-      { id: 'a', balance: 230, currency: 'USD' },
-    ];
+    const accounts = [{ id: 'a', balance: 230, currency: 'USD' }];
     const result = validate(parsed, accounts);
     expect(result.status_code).to.equal('AC02');
   });
@@ -93,9 +91,9 @@ describe('Validator', () => {
       type: 'DEBIT',
       amount: 30,
       currency: 'USD',
-      debit_account: 'a',
-      credit_account: 'c',
-      execute_by: null,
+      debitAccount: 'a',
+      creditAccount: 'c',
+      executeBy: null,
     };
     const accounts = [
       { id: 'a', balance: 230, currency: 'USD' },
@@ -110,9 +108,9 @@ describe('Validator', () => {
       type: 'DEBIT',
       amount: 30,
       currency: 'USD',
-      debit_account: 'a',
-      credit_account: 'b',
-      execute_by: '2026-9-20',
+      debitAccount: 'a',
+      creditAccount: 'b',
+      executeBy: '2026-9-20',
     };
     const accounts = [
       { id: 'a', balance: 230, currency: 'USD' },
