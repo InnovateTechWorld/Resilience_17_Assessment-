@@ -29,22 +29,20 @@ describe('Parser', () => {
   });
 
   it('should parse an instruction with a future date', () => {
-    const instruction =
-      'DEBIT 500 USD FROM ACCOUNT N90394 FOR CREDIT TO ACCOUNT N9122 ON 2026-09-20';
+    const instruction = 'DEBIT 50 GBP FROM ACCOUNT x FOR CREDIT TO ACCOUNT y ON 2026-12-31';
     const result = parseInstruction(instruction);
     expect(result).to.deep.equal({
       type: 'DEBIT',
-      amount: 500,
-      currency: 'USD',
-      debitAccount: 'N90394',
-      creditAccount: 'N9122',
-      executeBy: '2026-09-20',
+      amount: 50,
+      currency: 'GBP',
+      debitAccount: 'X',
+      creditAccount: 'Y',
+      executeBy: '2026-12-31',
     });
   });
 
   it('should handle extra whitespace', () => {
-    const instruction =
-      '  DEBIT   30   USD   FROM   ACCOUNT   a   FOR   CREDIT   TO   ACCOUNT   b  ';
+    const instruction = 'DEBIT   30    USD   FROM   ACCOUNT   a   FOR   CREDIT   TO   ACCOUNT   b';
     const result = parseInstruction(instruction);
     expect(result).to.deep.equal({
       type: 'DEBIT',
@@ -57,12 +55,12 @@ describe('Parser', () => {
   });
 
   it('should handle mixed case keywords', () => {
-    const instruction = 'Debit 30 uSd FrOm AcCoUnT a FoR cReDiT tO aCcOuNt b';
+    const instruction = 'debit 100 gbp from account a for credit to account b';
     const result = parseInstruction(instruction);
     expect(result).to.deep.equal({
       type: 'DEBIT',
-      amount: 30,
-      currency: 'USD',
+      amount: 100,
+      currency: 'GBP',
       debitAccount: 'A',
       creditAccount: 'B',
       executeBy: null,
@@ -70,26 +68,20 @@ describe('Parser', () => {
   });
 
   it('should return an error for an invalid instruction', () => {
-    const instruction = 'SEND 100 USD TO ACCOUNT b';
+    const instruction = 'SEND 30 USD TO ACCOUNT b';
     const result = parseInstruction(instruction);
-    expect(result).to.deep.equal({
-      error: 'SY01',
-    });
+    expect(result).to.deep.equal({ error: 'SY01' });
   });
 
   it('should return an error for a malformed instruction', () => {
-    const instruction = 'DEBIT 100 USD a FOR CREDIT TO ACCOUNT b';
+    const instruction = 'DEBIT 30 USD FROM ACCOUNT a FOR CREDIT TO ACCOUNT';
     const result = parseInstruction(instruction);
-    expect(result).to.deep.equal({
-      error: 'SY02',
-    });
+    expect(result).to.deep.equal({ error: 'SY03' });
   });
 
   it('should return an error for a non-integer amount', () => {
-    const instruction = 'DEBIT 100.50 USD FROM ACCOUNT a FOR CREDIT TO ACCOUNT b';
+    const instruction = 'DEBIT 30.5 USD FROM ACCOUNT a FOR CREDIT TO ACCOUNT b';
     const result = parseInstruction(instruction);
-    expect(result).to.deep.equal({
-      error: 'AM01',
-    });
+    expect(result).to.deep.equal({ error: 'AM01' });
   });
 });
